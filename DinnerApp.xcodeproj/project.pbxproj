@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,7 @@
 		7CA38EBE291F246C0071C390 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CA38EBC291F246C0071C390 /* Main.storyboard */; };
 		7CA38EC0291F24780071C390 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CA38EBF291F24780071C390 /* Assets.xcassets */; };
 		7CA38EC3291F24780071C390 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CA38EC1291F24780071C390 /* LaunchScreen.storyboard */; };
+		7CA38ECB291F97320071C390 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA38ECA291F97320071C390 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		7CA38EBF291F24780071C390 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7CA38EC2291F24780071C390 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7CA38EC4291F24780071C390 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7CA38ECA291F97320071C390 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +42,7 @@
 		7CA38EAA291F246B0071C390 = {
 			isa = PBXGroup;
 			children = (
+				7CA38ECA291F97320071C390 /* Constants.swift */,
 				7CA38EB5291F246C0071C390 /* DinnerApp */,
 				7CA38EB4291F246C0071C390 /* Products */,
 			);
@@ -103,7 +106,7 @@
 				};
 			};
 			buildConfigurationList = 7CA38EAE291F246C0071C390 /* Build configuration list for PBXProject "DinnerApp" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -141,6 +144,7 @@
 				7CA38EBB291F246C0071C390 /* ViewController.swift in Sources */,
 				7CA38EB7291F246C0071C390 /* AppDelegate.swift in Sources */,
 				7CA38EB9291F246C0071C390 /* SceneDelegate.swift in Sources */,
+				7CA38ECB291F97320071C390 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,8 +297,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -321,8 +324,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
