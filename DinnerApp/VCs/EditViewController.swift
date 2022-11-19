@@ -15,17 +15,18 @@ class EditViewController: UIViewController {
     private var token = ""
     let consts = Constants.shared
     let okAlert = OkAlert()
-    
+    var selectedCountry = ""
+
     @IBOutlet weak var titleTextField: UITextField! //①
     @IBOutlet weak var descriptionTextView: UITextView! //②
-    
     @IBOutlet weak var calendarDatePicker: UIDatePicker!
     @IBOutlet weak var otherTextField: UITextField!
     @IBOutlet weak var search_country: UIPickerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        selectedCountry = consts.country[0]
+
         //記事のIDがnilじゃなければ記事を読み込む
         guard let id = articleId else { return }
         loadArticle(articleId: id)
@@ -49,10 +50,14 @@ class EditViewController: UIViewController {
             switch response.result {
             case .success(let article):
                 print("🌟success from Edit🌟")
+                
                 self.titleTextField.text = article.title
+//                self.search_country.string = article.country
                 self.descriptionTextView.text = article.description
-
                 self.calendarDatePicker.date = article.calendarDate()
+                self.otherTextField.text = article.other
+                
+                
                 let index = self.consts.country.index(of: article.country)!
                 print("country : \(article.country)")
                 print("index : \(index)")
@@ -127,14 +132,18 @@ class EditViewController: UIViewController {
        //↓ココから削除処理↓
         //削除リクエスト(DELETE)
         func deleteRequest(token: String, articleId: Int){
-            guard let url = URL(string: consts.baseUrl + "/api/posts/\(articleId)") else { return }
-            let headers :HTTPHeaders = [.authorization(bearerToken: token)]
+            guard let url = URL(string: consts.baseUrl + "/api/dinners/\(articleId)") else { return }
+//            let headers :HTTPHeaders = [.authorization(bearerToken: token)]
+            print(url)
+            
+            
             
             AF.request(
                 url,
-                method: .delete,
-                headers: headers
+                method: .delete//,
+//                headers: headers
             ).response { response in
+                print(response.response)
                 switch response.result {
                 case .success:
                     self.completionAlart(title: "削除完了", message: "記事を削除しました")
@@ -148,7 +157,7 @@ class EditViewController: UIViewController {
     func updateAlert(token: String, articleId: Int) {
         let alert = UIAlertController(title: "更新しますか?", message: "この記事を更新してもよろしいですか?", preferredStyle: .alert)
         let updateAction = UIAlertAction(title: "更新", style: .destructive) { action in
-//            self.updateRequest(article: articleId)
+            self.updateRequest()
         }
         let cancelAction = UIAlertAction(title: "キャンセル", style: .cancel)
         alert.addAction(updateAction)
@@ -183,19 +192,24 @@ class EditViewController: UIViewController {
 //    var PickerView = UIPickerView()
 //    var country:[String] = ["Japan","Spain","Costa Rica","China","Germany"]
     
-    @IBAction func date(_ sender: Any) {
-    }
+//    @IBAction func date(_ sender: Any) {
+//    }
+    
+//    @IBOutlet weak var datePicker: UIDatePicker!
     
 //    @IBOutlet weak var language: UIPickerView!
     
-    @IBOutlet weak var languageTextLabel: UILabel!
     
-    @IBAction func otherTextView(_ sender: Any) {
-    }
+    
+    @IBOutlet weak var languageTextLabel: UILabel!
+//
+//    @IBAction func otherTextView(_ sender: Any) {
+//    }
     //Update(更新)ボタン
     @IBAction func updateButton(_ sender: Any) {
         if titleTextField.text != "" && descriptionTextView.text != "" {
             guard let id = articleId else { return }
+//            print(self.article)
             updateAlert(token: token, articleId: id)
         } else {
             okAlert.showOkAlert(title: "未入力欄があります", message: "全ての欄を入力してください", viewController: self)
@@ -211,28 +225,42 @@ class EditViewController: UIViewController {
     
     //投稿時のpostRequestメソッドのbodyとtitleだけバージョン(更新なのでpatch)
     //ArticleIDをdinnereIDに変えて、articleを画面からもってくる。
-    func updateRequest(article: Article) {
-        let url = URL(string: consts.baseUrl + "/api/dinners/\(article.id)")!
+    func updateRequest() {
+        let url = URL(string: consts.baseUrl + "/api/dinners/\(articleId!)")!
+//        let parameters: Parameters = [
+////            "title": titleText.text,
+////            "country": article.country,
+////            "calendar": article.calendar,
+////            "category_id": article.category_id,
+////            "other": article.other,
+////            "description": article.description,
+//            "user_id": 3
+//
+////            "description": article.description,
+////            "created_at": article.created_at,
+////            "updated_at": article.updated_at,
+////            "user_name": article.user_name,
+////            "category_name": article.category_name,
+//        ]
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd"
+        let date = df.string(from: self.calendarDatePicker.date)
         let parameters: Parameters = [
-            "description": article.description,
-            "title": article.title,
-            "country": article.country,
-            "other": article.other,
-//            "user_id": article.user_id,
-            "category_id": article.category_id,
-            "description": article.description,
-//            "created_at": article.created_at,
-//            "updated_at": article.updated_at,
-//            "user_name": article.user_name,
-            "calendar": article.calendar,
-//            "category_name": article.category_name,
+            "_method": "PATCH",
+            "title": self.titleTextField.text!,
+            "country": self.selectedCountry,
+            "calendar": date,
+            "category_id": 1,
+            "other": self.otherTextField.text!,
+            "description": self.descriptionTextView.text!,
+            "user_id": 1
         ]
         let headers :HTTPHeaders = [.authorization(bearerToken: token)]
         AF.request(url,
-            method: .patch,
-            parameters: parameters,
-            encoding: JSONEncoding.default,
-            headers: headers
+            method: .post,
+            parameters: parameters//,
+//            encoding: JSONEncoding.default,
+//            headers: headers
         ).response { response in
             switch response.result {
             case .success:
@@ -275,6 +303,7 @@ extension EditViewController: UIPickerViewDelegate, UIPickerViewDataSource {
                     didSelectRow row: Int,
                     inComponent component: Int) {
         // 処理
+        selectedCountry = consts.country[row]
     }
 }
 

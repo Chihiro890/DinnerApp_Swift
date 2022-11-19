@@ -12,11 +12,8 @@ import KeychainAccess
 
 class IndexViewController: UIViewController {
     @IBOutlet weak var indexTableView: UITableView!
-    
     @IBOutlet weak var search_country: UIPickerView!
-    
     @IBOutlet weak var from_date: UIDatePicker!
-    
     @IBOutlet weak var to_date: UIDatePicker!
     
     

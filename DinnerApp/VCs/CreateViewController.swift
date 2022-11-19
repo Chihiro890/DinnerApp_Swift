@@ -14,19 +14,24 @@ class CreateViewController: UIViewController {
     private var token = ""
     let consts = Constants.shared
     let okAlert = OkAlert()
+    var selectedCountry = ""
 //    private var token = "" //アクセストークンを格納しておく変数
     
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var searchcountry: UIPickerView!
 //    @IBOutlet weak var date: UIPickerView!
-    @IBOutlet weak var date: UIPickerView!
-//    @IBOutlet weak var languageTextView: UITextView!
+//    @IBOutlet weak var date: UIPickerView!
+//
+    @IBOutlet weak var calendarDatePicker: UIDatePicker!
+    //    @IBOutlet weak var languageTextView: UITextView!
     @IBOutlet weak var otherTextView: UITextField!
     @IBOutlet weak var detailTextView: UITextView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        searchcountry.delegate = self
+        searchcountry.dataSource = self
+        selectedCountry = consts.country[0]
         //token読み込み
         token = LoadToken().loadAccessToken()
         //キーチェーンからアクセストークンを取得して変数に格納
@@ -36,26 +41,31 @@ class CreateViewController: UIViewController {
         
     }
     @IBAction func postArticle(_ sender: Any) {
-//               let article = Article()
-//               postRequest(article: article)
-
+               postRequest()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             titleTextField.resignFirstResponder()
 //            bodyTextView.resignFirstResponder()
     }
-    func postRequest(article: Article) {
+    func postRequest() {
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "yyyy-MM-dd"
+        
+        let date = dateformatter.string(from: self.calendarDatePicker.date)
              //URL生成
-            let url = URL(string: consts.baseUrl + "/items")!
+        
+            let url = URL(string: consts.baseUrl + "/api/dinners")!
              // Qiita API V2に合わせたパラメータを設定
+//        "Laravel": Xcode
             let parameters: Parameters = [
-                "title": article.title,
-                "country": article.country,
-                "calendar": article.calendar,
-                "category_id":article.category_id,
-                "other": article.other,
-                "description": article.description,
+                "title": titleTextField.text!,
+                "country": selectedCountry,
+                "calendar": date,
+                "category_id": 1,
+                "other": otherTextView.text!,
+                "description": detailTextView.text!,
+                "user_id": 1
                 
 //                "tags": [
 //                    [
@@ -65,9 +75,13 @@ class CreateViewController: UIViewController {
 //                ],
 //                "title": article.title
             ]
+        
+        
+        print("PARAMETERS:", parameters)
 
             //ヘッダにアクセストークンを含める
-            let headers :HTTPHeaders = [.authorization(bearerToken: token)]
+//            let headers :HTTPHeaders = [.authorization(bearerToken: token)]
+        let headers :HTTPHeaders = [.contentType("application/json"), .accept("description")]
 
             //Alamofireで投稿をリクエスト
             AF.request(
@@ -76,6 +90,9 @@ class CreateViewController: UIViewController {
                 parameters: parameters,
                 encoding: JSONEncoding.default,
                 headers: headers
+//            ).responseJSON{JSON in
+//                print(JSON)
+//            }
             ).response { response in
                 switch response.result {
                 //Success
@@ -102,3 +119,34 @@ class CreateViewController: UIViewController {
     */
 
 }
+
+extension CreateViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+     
+    // UIPickerViewの列の数
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+     
+    // UIPickerViewの行数、要素の全数
+    func pickerView(_ pickerView: UIPickerView,
+                    numberOfRowsInComponent component: Int) -> Int {
+        return consts.country.count
+    }
+     
+    // UIPickerViewに表示する配列
+    func pickerView(_ pickerView: UIPickerView,
+                    titleForRow row: Int,
+                    forComponent component: Int) -> String? {
+        
+        return consts.country[row]
+    }
+     
+    // UIPickerViewのRowが選択された時の挙動
+    func pickerView(_ pickerView: UIPickerView,
+                    didSelectRow row: Int,
+                    inComponent component: Int) {
+        // 処理
+        selectedCountry = consts.country[row]
+    }
+}
+

@@ -24,6 +24,7 @@ struct Article: Codable {
             case title
             case country
             case other
+            
             case user_id
             case category_id
             case description
