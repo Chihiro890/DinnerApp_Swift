@@ -24,6 +24,7 @@ class IndexViewController: UIViewController {
     let consts = Constants.shared
     let sectionTitle = ["TOPIC"]
     private var token = ""
+    var selectedCountry = ""
     
        var articles: [Article] = []
 //       var country: country!
@@ -32,9 +33,10 @@ class IndexViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        selectedCountry = consts.country.first!
         indexTableView.dataSource = self
         indexTableView.delegate = self
-        
+        search_country.delegate = self
        
 //        getUser()
 
@@ -86,6 +88,62 @@ class IndexViewController: UIViewController {
 //            }
         }
     
+    @IBAction func search(_ sender: Any) {
+        searchIndex()
+    }
+    func searchIndex(){
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "yyyy-MM-dd"
+        
+        let calendar_s = dateformatter.string(from: from_date.date)
+        let calendar_e = dateformatter.string(from: to_date.date)
+        
+        // たたきたいapiのURL、トークン、ヘッダーを用意
+// /api/dinners?calendar_s=2022-11-15&calendar_e=2022-11-27&country=Brazil HTTP/1.1 の形にする
+
+//        let url = URL(string: consts.baseUrl +
+//                      "/api/dinners")!
+                      
+        let url = URL(string: consts.baseUrl + "/api/dinners?calendar_s=\(calendar_s)&calendar_e=\(calendar_e)&country=\(selectedCountry)")!
+        
+        let token = LoadToken().loadAccessToken()
+        let headers: HTTPHeaders = [
+            .contentType("application/json"),
+            .accept("application/json"),
+            .authorization(bearerToken: token)
+        ]
+        
+            /* ヘッダーはこの書き方でもOK
+            let headers: HTTPHeaders = [
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer \(token)",
+            ]
+            */
+            
+            //Alamofireでリクエスト
+            AF.request(
+                url,
+                method: .get,
+                encoding: JSONEncoding.default,
+                headers: headers
+            ).responseDecodable(of: Index.self) { response in
+                switch response.result {
+                case .success(let articles):
+                    print("🔥success from Search🔥")
+                    if let atcls = articles.data {
+                        self.articles = atcls
+                        self.indexTableView.reloadData()
+//                        print(self.articles)
+                    }
+                case .failure(let err):
+                    print(err)
+                }
+            }
+//            ).responseJSON{JSON in
+//                print(JSON)
+//            }
+        }
     //自分(user)の情報取得(idとname)
     func getUser() {
         let url = URL(string: consts.baseUrl + "/api/user")!
@@ -179,3 +237,33 @@ extension IndexViewController: UITableViewDelegate {
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
+extension IndexViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+     
+    // UIPickerViewの列の数
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+     
+    // UIPickerViewの行数、要素の全数
+    func pickerView(_ pickerView: UIPickerView,
+                    numberOfRowsInComponent component: Int) -> Int {
+        return consts.country.count
+    }
+     
+    // UIPickerViewに表示する配列
+    func pickerView(_ pickerView: UIPickerView,
+                    titleForRow row: Int,
+                    forComponent component: Int) -> String? {
+        
+        return consts.country[row]
+    }
+     
+    // UIPickerViewのRowが選択された時の挙動
+    func pickerView(_ pickerView: UIPickerView,
+                    didSelectRow row: Int,
+                    inComponent component: Int) {
+        // 処理
+        selectedCountry = consts.country[row]
+    }
+}
+

@@ -5,8 +5,8 @@ struct Comment: Codable {
     let body: String
     let user_id: Int
     let dinner_id: Int
-    let created_at: Int
-    let updated_at: Int
+    let created_at: String
+    let updated_at: String
     let user_name: String
     
 //    enum CodingKeys: String, CodingKey {

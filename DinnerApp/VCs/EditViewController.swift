@@ -186,7 +186,9 @@ class EditViewController: UIViewController {
     @IBAction func date(_ sender: Any) {
     }
     
-    @IBOutlet weak var language: UIPickerView!
+//    @IBOutlet weak var language: UIPickerView!
+    
+    @IBOutlet weak var languageTextLabel: UILabel!
     
     @IBAction func otherTextView(_ sender: Any) {
     }
@@ -223,7 +225,7 @@ class EditViewController: UIViewController {
 //            "updated_at": article.updated_at,
 //            "user_name": article.user_name,
             "calendar": article.calendar,
-        
+//            "category_name": article.category_name,
         ]
         let headers :HTTPHeaders = [.authorization(bearerToken: token)]
         AF.request(url,
