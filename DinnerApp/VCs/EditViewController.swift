@@ -25,8 +25,9 @@ class EditViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        selectedCountry = consts.country[row]
         selectedCountry = consts.country[0]
-
+        
         //記事のIDがnilじゃなければ記事を読み込む
         guard let id = articleId else { return }
         loadArticle(articleId: id)
@@ -62,6 +63,7 @@ class EditViewController: UIViewController {
                 print("country : \(article.country)")
                 print("index : \(index)")
                 self.search_country.selectRow(index, inComponent: 0, animated: false)
+                self.selectedCountry = article.country
 
             case .failure(let error):
                 print("🌟failure from Edit🌟")
@@ -74,52 +76,56 @@ class EditViewController: UIViewController {
     }
 // 追加ここまで
     
-//    //更新のリクエスト
-//      func updateRequest(token: String, articleId: Int) {
-//
-//          //URLに記事のIDを含めることを忘れずに!
-//          guard let url = URL(string: consts.baseUrl + "/api/dinners/\(articleId)") else { return }
-//
-//          let headers: HTTPHeaders = [
-//              .authorization(bearerToken: token),
-//              .accept("application/json"),
-//              .contentType("multipart/form-data")
-//          ]
-//
-//          //文字情報と画像やファイルを送信するときは 「AF.upload(multipartFormData: …」 を使う
-//          AF.upload(
-//              multipartFormData: { multipartFormData in
-//
-//                  guard let titleTextData = self.titleTextField.text?.data(using: .utf8) else {return}
-//                  multipartFormData.append(titleTextData, withName: "title")
-//
-////                  guard let bodyTextData = self.bodyTextView.text?.data(using: .utf8) else {return}
-////                  multipartFormData.append(bodyTextData, withName: "body")
-//
-//                  //「PATCH」のHTTPメソッドをmultipartFormDataに追加
-//                  guard let method = "patch".data(using: .utf8) else { return }
-//                  multipartFormData.append(method, withName: "_method")
-//
-//
-//              },
-//              to: url,
-//              method: .post,
-//              headers: headers
-////          ).response { response in
-////              switch response.result {
-////              case .success:
-////                  print(response)
-////                  /*  ここに更新成功のときの処理 */
-////                  self.completionAlart(title: "更新完了!", message: "記事を更新しました")
-////              case .failure(let err):
-////                  print(err)
-////                  self.okAlert.showOkAlert(title: "エラー!", message: "\(err)", viewController: self)
-////              }
-////          }
+    //更新のリクエスト
+      func updateRequest(token: String, articleId: Int) {
+
+          //URLに記事のIDを含めることを忘れずに!
+          guard let url = URL(string: consts.baseUrl + "/api/dinners/\(articleId)") else { return }
+
+          let headers: HTTPHeaders = [
+              .authorization(bearerToken: token),
+              .accept("application/json"),
+              .contentType("multipart/form-data")
+          ]
+
+          //文字情報と画像やファイルを送信するときは 「AF.upload(multipartFormData: …」 を使う
+          AF.upload(
+              multipartFormData: { multipartFormData in
+
+                  guard let titleTextData = self.titleTextField.text?.data(using: .utf8) else {return}
+                  multipartFormData.append(titleTextData, withName: "title")
+
+                  guard let descriptionTextData = self.descriptionTextView.text?.data(using: .utf8) else {return}
+                  multipartFormData.append(descriptionTextData, withName: "description")
+                  
+                  guard let countryTextData = self.selectedCountry.data(using: .utf8) else {return}
+                  multipartFormData.append(countryTextData, withName: "country")
+
+
+                  //「PATCH」のHTTPメソッドをmultipartFormDataに追加
+                  guard let method = "patch".data(using: .utf8) else { return }
+                  multipartFormData.append(method, withName: "_method")
+
+
+              },
+              to: url,
+              method: .post,
+              headers: headers
+          ).response { response in
+              switch response.result {
+              case .success:
+                  print(response)
+                  /*  ここに更新成功のときの処理 */
+                  self.completionAlart(title: "更新完了!", message: "記事を更新しました")
+              case .failure(let err):
+                  print(err)
+                  self.okAlert.showOkAlert(title: "エラー!", message: "\(err)", viewController: self)
+              }
+          }
 //          ).responseJSON { JSON in
 //              print(JSON)
 //          }
-//      }
+      }
     //更新または削除処理完了の際に表示するアラート。OKを押すと、前の画面に戻る
     func completionAlart(title: String, message: String) {
         let alert = UIAlertController(title: title , message: message , preferredStyle: .alert)
@@ -305,6 +311,19 @@ extension EditViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         // 処理
         selectedCountry = consts.country[row]
     }
+    
+    
+//    func detectCountryIndex(countryName: String) -> Int {
+//        let country = consts.country
+//        var countryIndex = 0
+//        for (index, element) in country.enumerated() {
+//            if element == countryName {
+//                countryIndex = index
+//                return countryIndex
+//            }
+//        }
+//        return countryIndex
+//    }
 }
 
 
